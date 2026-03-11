@@ -10,7 +10,7 @@ import {
   Zap,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import type { NavLink } from "../data/dashboardData";
+import type { NavLink } from "../utils/dashboardData";
 
 interface AppNavbarProps {
   isDarkMode: boolean;
@@ -20,6 +20,7 @@ interface AppNavbarProps {
   onPageChange: (page: NavLink) => void;
   searchQuery: string;
   onSearchChange: (value: string) => void;
+  searchPlaceholder?: string;
 }
 
 export default function AppNavbar({
@@ -30,6 +31,7 @@ export default function AppNavbar({
   onPageChange,
   searchQuery,
   onSearchChange,
+  searchPlaceholder,
 }: AppNavbarProps) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -44,7 +46,7 @@ export default function AppNavbar({
   const mobilePanelClass = isDarkMode
     ? "border-white/10 bg-[#0b0b0f]"
     : "border-zinc-200 bg-white";
-  const searchPlaceholder = useMemo(
+  const computedSearchPlaceholder = useMemo(
     () => `Search ${activePage.toLowerCase()}...`,
     [activePage]
   );
@@ -93,7 +95,7 @@ export default function AppNavbar({
             type="text"
             value={searchQuery}
             onChange={(event) => onSearchChange(event.target.value)}
-            placeholder={searchPlaceholder}
+            placeholder={searchPlaceholder ?? computedSearchPlaceholder}
             className="w-full bg-transparent text-sm outline-none placeholder:text-inherit"
           />
         </div>
@@ -173,7 +175,7 @@ export default function AppNavbar({
                 type="text"
                 value={searchQuery}
                 onChange={(event) => onSearchChange(event.target.value)}
-                placeholder={searchPlaceholder}
+                placeholder={searchPlaceholder ?? computedSearchPlaceholder}
                 className="w-full bg-transparent text-sm outline-none placeholder:text-inherit"
               />
             </div>

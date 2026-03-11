@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Calendar, ChevronLeft, ChevronRight, EllipsisVertical } from "lucide-react";
-import type { ToolItem } from "../data/dashboardData";
+import type { ToolItem } from "../utils/dashboardData";
 import StatusBadge from "./StatusBadge";
 
 const ITEMS_PER_PAGE = 10;

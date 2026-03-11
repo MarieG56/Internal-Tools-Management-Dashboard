@@ -1,4 +1,4 @@
-import type { ToolStatus } from "../data/dashboardData";
+import type { ToolStatus } from "../utils/dashboardData";
 
 const STATUS_CLASS: Record<ToolStatus, string> = {
   Active: "bg-gradient-to-r from-emerald-400 to-teal-500 text-white",

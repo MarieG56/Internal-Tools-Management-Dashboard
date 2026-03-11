@@ -1,4 +1,4 @@
-import type { StatItem } from "../data/dashboardData";
+import type { StatItem } from "../utils/dashboardData";
 import StatCard from "./StatCard";
 
 interface StatsGridProps {

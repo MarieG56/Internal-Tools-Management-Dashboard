@@ -1,14 +1,24 @@
-"use client";
-
 import { useState } from "react";
+import { useRouter } from "next/router";
 import AppNavbar from "../components/AppNavbar";
 import DashboardHeading from "../components/DashboardHeading";
 import StatsGrid from "../components/StatsGrid";
 import ToolsTable from "../components/ToolsTable";
-import { navLinks, statsData, toolsData, type NavLink } from "../data/dashboardData";
+import {
+  navLinks,
+  navPathMap,
+  statsData,
+  toolsData,
+  type NavLink,
+} from "../utils/dashboardData";
 
-export default function HomePage() {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+interface PageProps {
+  isDarkMode: boolean;
+  toggleTheme: () => void;
+}
+
+export default function HomePage({ isDarkMode, toggleTheme }: PageProps) {
+  const router = useRouter();
   const [activePage, setActivePage] = useState<NavLink>("Dashboard");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -34,10 +44,13 @@ export default function HomePage() {
     >
       <AppNavbar
         isDarkMode={isDarkMode}
-        onToggleTheme={() => setIsDarkMode((value) => !value)}
+        onToggleTheme={toggleTheme}
         navLinks={navLinks}
         activePage={activePage}
-        onPageChange={setActivePage}
+        onPageChange={(page) => {
+          setActivePage(page);
+          void router.push(navPathMap[page]);
+        }}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
       />

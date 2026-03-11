@@ -1,4 +1,4 @@
-import type { StatItem } from "../data/dashboardData";
+import type { StatItem } from "../utils/dashboardData";
 
 interface StatCardProps {
   item: StatItem;
@@ -26,7 +26,7 @@ export default function StatCard({ item, isDarkMode }: StatCardProps) {
 
       <div>
         <p
-          className={`text-2xl font-bold tracking-tight sm:text-[1.625rem] ${isDarkMode ? "text-white" : "text-zinc-900"}`}
+          className={`text-xl font-bold tracking-tight sm:text-[1.625rem] ${isDarkMode ? "text-white" : "text-zinc-900"}`}
         >
           {item.value}
           {item.valueAccent && (
@@ -38,14 +38,6 @@ export default function StatCard({ item, isDarkMode }: StatCardProps) {
         <span className={`mt-2 inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold sm:mt-3 sm:px-2.5 sm:py-1 sm:text-xs ${item.badgeClass}`}>
           {item.badge}
         </span>
-        {typeof item.progress === "number" && (
-          <div className="mt-3 h-1.5 w-full rounded-full bg-white/10">
-            <div
-              className="h-1.5 rounded-full bg-gradient-to-r from-emerald-400 to-teal-500"
-              style={{ width: `${item.progress}%` }}
-            />
-          </div>
-        )}
       </div>
     </article>
   );

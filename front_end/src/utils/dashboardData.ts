@@ -15,6 +15,14 @@ import {
 
 export type NavLink = "Dashboard" | "Tools" | "Analytics" | "Settings";
 export type ToolStatus = "Active" | "Expiring" | "Unused";
+export type ToolApiStatus = "active" | "expiring" | "unused";
+
+export const navPathMap: Record<NavLink, string> = {
+  Dashboard: "/",
+  Tools: "/tools",
+  Analytics: "/analytics",
+  Settings: "/settings",
+};
 
 export interface StatItem {
   label: string;
