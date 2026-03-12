@@ -1,7 +1,7 @@
-# TechCorp Dashboard - Jour 6/7
+# TechCorp Dashboard - Internal Tools Management
 
 Frontend built with Next.js, React, TypeScript and Tailwind CSS.
-Jour 7 includes a backend-connected Tools catalog using JSON Server.
+This project implements a 3-day technical challenge to build a complete SaaS monitoring dashboard.
 
 ## Stack
 
@@ -10,6 +10,8 @@ Jour 7 includes a backend-connected Tools catalog using JSON Server.
 - TypeScript
 - Tailwind CSS
 - Lucide React icons
+- Recharts (for data visualization)
+- next-themes (for dark/light mode persistence)
 
 ## Backend
 
@@ -20,7 +22,7 @@ Jour 7 includes a backend-connected Tools catalog using JSON Server.
   - `POST /tools`
   - `PATCH /tools/:id`
 
-## Run locally
+## 🚀 Quick Start
 
 1. Install dependencies:
 
@@ -40,171 +42,58 @@ npm run dev
 npm run build
 ```
 
-## Implemented features
+## 🏗️ Architecture
 
-### Header foundation
+The project is structured around the Next.js Pages router to handle the 3 main views:
 
-- TechCorp logo + title
-- Navigation: Dashboard / Tools / Analytics / Settings
-- Functional search input with adaptive placeholder by selected nav item
-- Notifications badge with counter
-- User avatar with dropdown menu (Profile, Preferences, Sign out)
-- Responsive hamburger menu on mobile
+- `src/components/` - Reusable design system components (Navbar, StatCards, Tables, Badges)
+- `src/pages/` - The main views: `index.tsx` (Dashboard), `tools.tsx` (Catalog), `analytics.tsx` (Insights)
+- `src/hooks/` - Custom React hooks like `useToolsData` for data fetching and live polling
+- `src/utils/` - API helpers, constants, and shared TypeScript interfaces
+- `src/styles/` - Global styling and Tailwind configuration
 
-### KPI cards
+## 🎨 Design System Evolution
 
-- Monthly Budget: `€28,750/€30k`
-- Active Tools: `147`
-- Departments: `8`
-- Cost/User: `€156`
-- Budget includes a progress bar
-- Colored gradients and corner icons
-- Subtle hover animation
-- Responsive grid
+The design system was established on Day 6 using a modern dark theme with subtle gradients (purple/blue/pink/emerald) and Lucide icons. 
+For Days 7 and 8, this exact design language was strictly maintained without new mockups:
+- The same `AppNavbar` is reused across all pages.
+- The `StatCard` component from the Dashboard is reused on the Analytics page.
+- The `StatusBadge` component is reused in the Tools catalog.
+- Forms, modals, and dropdowns share the exact same border radii (`rounded-xl`, `rounded-2xl`), background colors, and hover states.
+- A global `next-themes` provider ensures dark/light mode preferences persist seamlessly across page navigations.
 
-### Recent Tools
+## 🔗 Navigation & User Journey
 
-- Columns: Tool / Department / Users / Monthly Cost / Status / Actions
-- Status badges:
-  - Active (green gradient)
-  - Expiring (orange gradient)
-  - Unused (red-pink gradient)
-- Row hover effect
-- Sorting on at least 2 columns (Tool, Users, Monthly Cost)
-- Pagination (10 items per page)
-- Actions dropdown per row (View, Edit, Delete)
-- Mobile optimized stacked layout (no horizontal scrolling required)
+The flow is completely seamless:
+- **Dashboard (/)**: High-level overview and recent tools.
+- **Tools (/tools)**: Deep dive into the catalog with full CRUD capabilities.
+- **Analytics (/analytics)**: Data visualization and insights.
+- **Cross-page links**: Optimization alerts on the Analytics page link directly back to the Tools page for quick action. Tools on the catalog page have a quick-action button to view their analytics.
 
-### Jour 7 - Tools Page (`/tools`)
+## 📊 Data Integration Strategy
 
-- Backend-connected tools catalog
-- Advanced filters:
-  - Department
-  - Status
-  - Category
-  - Cost range (min/max)
-- Header search adapted to tools catalog
-- Tool management:
-  - Add new tool (modal + validation)
-  - View details (modal)
-  - Edit tool (modal)
-  - Enable/Disable status toggle
-- Bulk operations:
-  - Enable selected
-  - Disable selected
-  - Mark Expiring
-- Loading, error and empty states consistent with Day 6 design
+Data is fetched from the provided JSON server using the native `fetch` API wrapped in custom utility functions (`src/utils/api.ts`). 
+A custom hook (`useToolsData`) manages the loading, error, and success states. It also supports background polling for real-time updates without blocking the UI.
 
-## Project structure
+## 📱 Progressive Responsive Design
 
-- `src/components/` - Reusable design system components
-- `src/pages/` - Dashboard, Tools, Analytics, Settings pages
-- `src/hooks/` - Data fetching logic
-- `src/utils/` - API helpers, constants and shared types
-- `src/styles/` - Global styling (Tailwind entry)
+A mobile-first approach was taken using Tailwind's responsive prefixes (`sm:`, `md:`, `lg:`):
+- **Mobile (< 640px)**: Stacked layouts, hamburger menus. Complex tables (like the Tools catalog) transform into stacked cards to avoid horizontal scrolling and provide larger tap targets.
+- **Tablet (640-1024px)**: 2-column grids for charts and KPIs.
+- **Desktop (> 1024px)**: Full multi-column layouts utilizing the maximum screen width.
 
-# TechCorp Dashboard - Jour 6/7
+## 📈 Data Visualization Philosophy
 
-Frontend built with Next.js, React, TypeScript and Tailwind CSS.
-Jour 7 includes a backend-connected Tools catalog using JSON Server.
+`recharts` was chosen for the Analytics page because it is highly customizable, responsive, and integrates perfectly with React.
+- The charts use the exact same color palette as the rest of the application (Tailwind's violet, emerald, rose, blue).
+- Custom tooltips were built to match the dark mode styling of the application's dropdowns and modals.
+- Interactive drill-downs allow users to click on a department in the Pie Chart to instantly filter the surrounding bar charts.
 
-## Stack
+## 🔮 Next Steps / Complete App Vision
 
-- Next.js (Pages Router)
-- React
-- TypeScript
-- Tailwind CSS
-- Lucide React icons
-
-## Backend
-
-- Base URL: `https://tt-jsonserver-01.alt-tools.tech`
-- Main endpoints used:
-  - `GET /tools`
-  - `GET /departments`
-  - `POST /tools`
-  - `PATCH /tools/:id`
-
-## Run locally
-
-1. Install dependencies:
-
-```bash
-npm install
-```
-
-2. Start the dev server:
-
-```bash
-npm run dev
-```
-
-3. Build for production:
-
-```bash
-npm run build
-```
-
-## Implemented features
-
-### Header foundation
-
-- TechCorp logo + title
-- Navigation: Dashboard / Tools / Analytics / Settings
-- Functional search input with adaptive placeholder by selected nav item
-- Notifications badge with counter
-- User avatar with dropdown menu (Profile, Preferences, Sign out)
-- Responsive hamburger menu on mobile
-
-### KPI cards
-
-- Monthly Budget: `€28,750/€30k`
-- Active Tools: `147`
-- Departments: `8`
-- Cost/User: `€156`
-- Budget includes a progress bar
-- Colored gradients and corner icons
-- Subtle hover animation
-- Responsive grid
-
-### Recent Tools
-
-- Columns: Tool / Department / Users / Monthly Cost / Status / Actions
-- Status badges:
-  - Active (green gradient)
-  - Expiring (orange gradient)
-  - Unused (red-pink gradient)
-- Row hover effect
-- Sorting on at least 2 columns (Tool, Users, Monthly Cost)
-- Pagination (10 items per page)
-- Actions dropdown per row (View, Edit, Delete)
-- Mobile optimized stacked layout (no horizontal scrolling required)
-
-### Jour 7 - Tools Page (`/tools`)
-
-- Backend-connected tools catalog
-- Advanced filters:
-  - Department
-  - Status
-  - Category
-  - Cost range (min/max)
-- Header search adapted to tools catalog
-- Tool management:
-  - Add new tool (modal + validation)
-  - View details (modal)
-  - Edit tool (modal)
-  - Enable/Disable status toggle
-- Bulk operations:
-  - Enable selected
-  - Disable selected
-  - Mark Expiring
-- Loading, error and empty states consistent with Day 6 design
-
-## Project structure
-
-- `src/components/` - Reusable design system components
-- `src/pages/` - Dashboard, Tools, Analytics, Settings pages
-- `src/hooks/` - Data fetching logic
-- `src/utils/` - API helpers, constants and shared types
-- `src/styles/` - Global styling (Tailwind entry)
+Future improvements for a complete SaaS Tools app could include:
+- **Authentication**: Implementing NextAuth to secure the dashboard.
+- **Role-Based Access Control**: Different views for IT Admins vs Department Managers.
+- **Advanced Caching**: Migrating from native `fetch` to TanStack Query (React Query) for advanced cache invalidation and optimistic UI updates.
+- **Settings Page**: Fleshing out the `/settings` route to manage global application preferences.
 
