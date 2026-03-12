@@ -12,6 +12,12 @@ export default function SettingsPage({ isDarkMode, toggleTheme }: PageProps) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
 
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      router.push(`/tools?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   return (
     <div
       className={`min-h-screen transition-colors duration-200 ${
@@ -28,7 +34,8 @@ export default function SettingsPage({ isDarkMode, toggleTheme }: PageProps) {
         onPageChange={(page) => void router.push(navPathMap[page])}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        searchPlaceholder="Search settings..."
+        onSearchSubmit={handleSearch}
+        searchPlaceholder="Search in tools catalog..."
       />
       <main className="mx-auto max-w-7xl px-4 py-8 md:px-6">
         <div

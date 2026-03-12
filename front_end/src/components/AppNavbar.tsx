@@ -20,6 +20,7 @@ interface AppNavbarProps {
   onPageChange: (page: NavLink) => void;
   searchQuery: string;
   onSearchChange: (value: string) => void;
+  onSearchSubmit?: () => void;
   searchPlaceholder?: string;
 }
 
@@ -31,6 +32,7 @@ export default function AppNavbar({
   onPageChange,
   searchQuery,
   onSearchChange,
+  onSearchSubmit,
   searchPlaceholder,
 }: AppNavbarProps) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -47,13 +49,13 @@ export default function AppNavbar({
     ? "border-white/10 bg-[#0b0b0f]"
     : "border-zinc-200 bg-white";
   const computedSearchPlaceholder = useMemo(
-    () => `Search ${activePage.toLowerCase()}...`,
+    () => `Search in tools catalog...`,
     [activePage]
   );
 
   return (
-    <nav className={`sticky top-0 z-50 border-b py-3 backdrop-blur ${navClass}`}>
-      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 md:gap-6 md:px-6">
+    <nav className={`sticky top-0 z-50 border-b py-3 backdrop-blur ${navClass} relative`}>
+      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 md:gap-6">
         <div className="flex items-center gap-2 md:mr-3">
           <div className="flex size-8 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600">
             <Zap className="size-4 text-white" />
@@ -88,16 +90,30 @@ export default function AppNavbar({
         <div className="ml-auto" />
 
         <div
-          className={`hidden w-44 items-center gap-2 rounded-xl px-3 py-2 text-sm sm:flex lg:w-56 xl:w-72 ${searchClass}`}
+          className={`hidden w-44 items-center gap-2 rounded-xl px-3 py-2 text-sm sm:flex lg:w-56 xl:w-72 ${searchClass} focus-within:ring-2 focus-within:ring-violet-500/50`}
         >
-          <Search className="size-4 shrink-0" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(event) => onSearchChange(event.target.value)}
-            placeholder={searchPlaceholder ?? computedSearchPlaceholder}
-            className="w-full bg-transparent text-sm outline-none placeholder:text-inherit"
-          />
+          <button 
+            type="button"
+            onClick={onSearchSubmit}
+            className="shrink-0 hover:text-violet-500 transition-colors"
+          >
+            <Search className="size-4" />
+          </button>
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (onSearchSubmit) onSearchSubmit();
+            }} 
+            className="w-full"
+          >
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(event) => onSearchChange(event.target.value)}
+              placeholder={searchPlaceholder ?? computedSearchPlaceholder}
+              className="w-full bg-transparent text-sm outline-none placeholder:text-inherit"
+            />
+          </form>
         </div>
 
         <div className="flex items-center gap-1 md:gap-2">
@@ -123,21 +139,43 @@ export default function AppNavbar({
           >
             <Settings className="size-5" />
           </button>
-          <button
-            onClick={() => setIsUserMenuOpen((value) => !value)}
-            className={`flex items-center gap-1 rounded-xl py-1 pl-1 pr-2 transition ${isDarkMode ? "hover:bg-white/10" : "hover:bg-zinc-100"}`}
-            aria-label="User menu"
-          >
-            <div
-              className={`size-7 rounded-full ${isDarkMode ? "bg-white" : "bg-zinc-300"}`}
-            />
-            <ChevronDown
-              className={`size-4 ${isDarkMode ? "text-zinc-400" : "text-zinc-500"}`}
-            />
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setIsUserMenuOpen((value) => !value)}
+              className={`flex items-center gap-1 rounded-xl py-1 pl-1 pr-1 transition ${isDarkMode ? "hover:bg-white/10" : "hover:bg-zinc-100"}`}
+              aria-label="User menu"
+            >
+              <div
+                className={`size-7 rounded-full ${isDarkMode ? "bg-white" : "bg-zinc-300"}`}
+              />
+              <ChevronDown
+                className={`size-4 ${isDarkMode ? "text-zinc-400" : "text-zinc-500"}`}
+              />
+            </button>
+            {isUserMenuOpen && (
+              <div className="absolute right-0 top-full mt-2 z-50">
+                <div
+                  className={`w-44 rounded-xl border p-1 text-sm shadow-lg ${mobilePanelClass}`}
+                >
+                  {["Profile", "Preferences", "Sign out"].map((item) => (
+                    <button
+                      key={item}
+                      className={`w-full rounded-lg px-3 py-2 text-left ${
+                        isDarkMode
+                          ? "text-zinc-300 hover:bg-white/10"
+                          : "text-zinc-600 hover:bg-zinc-100"
+                      }`}
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
           <button
             onClick={() => setIsMobileMenuOpen((value) => !value)}
-            className={`rounded-xl p-2 transition md:hidden ${isDarkMode ? "text-zinc-300 hover:bg-white/10" : "text-zinc-500 hover:bg-zinc-100"}`}
+            className={`rounded-xl p-1 transition md:hidden ${isDarkMode ? "text-zinc-300 hover:bg-white/10" : "text-zinc-500 hover:bg-zinc-100"}`}
             aria-label="Open menu"
           >
             {isMobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
@@ -145,39 +183,32 @@ export default function AppNavbar({
         </div>
       </div>
 
-      {isUserMenuOpen && (
-        <div className="mx-auto mt-2 flex max-w-7xl justify-end px-4 md:px-6">
-          <div
-            className={`w-44 rounded-xl border p-1 text-sm shadow-lg ${mobilePanelClass}`}
-          >
-            {["Profile", "Preferences", "Sign out"].map((item) => (
-              <button
-                key={item}
-                className={`w-full rounded-lg px-3 py-2 text-left ${
-                  isDarkMode
-                    ? "text-zinc-300 hover:bg-white/10"
-                    : "text-zinc-600 hover:bg-zinc-100"
-                }`}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
       {isMobileMenuOpen && (
         <div className="mx-auto mt-2 max-w-7xl px-4 md:hidden">
           <div className={`rounded-xl border p-3 ${mobilePanelClass}`}>
-            <div className={`mb-3 flex items-center gap-2 rounded-xl px-3 py-2 ${searchClass}`}>
-              <Search className="size-4 shrink-0" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(event) => onSearchChange(event.target.value)}
-                placeholder={searchPlaceholder ?? computedSearchPlaceholder}
-                className="w-full bg-transparent text-sm outline-none placeholder:text-inherit"
-              />
+            <div className={`mb-3 flex items-center gap-2 rounded-xl px-3 py-2 ${searchClass} focus-within:ring-2 focus-within:ring-violet-500/50`}>
+              <button 
+                type="button"
+                onClick={onSearchSubmit}
+                className="shrink-0 hover:text-violet-500 transition-colors"
+              >
+                <Search className="size-4" />
+              </button>
+              <form 
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (onSearchSubmit) onSearchSubmit();
+                }} 
+                className="w-full"
+              >
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(event) => onSearchChange(event.target.value)}
+                  placeholder={searchPlaceholder ?? computedSearchPlaceholder}
+                  className="w-full bg-transparent text-sm outline-none placeholder:text-inherit"
+                />
+              </form>
             </div>
             <div className="grid grid-cols-2 gap-2">
               {navLinks.map((item) => (

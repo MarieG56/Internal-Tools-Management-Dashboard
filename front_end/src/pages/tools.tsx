@@ -11,6 +11,7 @@ import {
   Save,
   Square,
   ToggleLeft,
+  BarChart2,
 } from "lucide-react";
 import AppNavbar from "../components/AppNavbar";
 import StatusBadge from "../components/StatusBadge";
@@ -93,6 +94,12 @@ export default function ToolsPage({ isDarkMode, toggleTheme }: PageProps) {
   const [confirmState, setConfirmState] = useState<ConfirmState | null>(null);
 
   useEffect(() => {
+    if (router.query.search) {
+      setSearchQuery(router.query.search as string);
+    }
+  }, [router.query.search]);
+
+  useEffect(() => {
     if (!feedback) return;
     const id = setTimeout(() => setFeedback(null), 3500);
     return () => clearTimeout(id);
@@ -108,9 +115,9 @@ export default function ToolsPage({ isDarkMode, toggleTheme }: PageProps) {
         if (searchQuery.trim()) {
           const v = searchQuery.toLowerCase();
           const matchesSearch =
-            tool.name.toLowerCase().includes(v) ||
-            tool.description.toLowerCase().includes(v) ||
-            tool.vendor.toLowerCase().includes(v);
+            (tool.name?.toLowerCase() || "").includes(v) ||
+            (tool.description?.toLowerCase() || "").includes(v) ||
+            (tool.vendor?.toLowerCase() || "").includes(v);
           if (!matchesSearch) return false;
         }
         if (statusFilter !== "all" && tool.status !== statusFilter) return false;
@@ -120,7 +127,7 @@ export default function ToolsPage({ isDarkMode, toggleTheme }: PageProps) {
         if (maxCost !== "" && tool.monthly_cost > maxCost) return false;
         return true;
       })
-      .sort((a, b) => a.name.localeCompare(b.name));
+      .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
   }, [tools, searchQuery, statusFilter, departmentFilter, categoryFilter, minCost, maxCost]);
 
   const allFilteredSelected =
@@ -249,6 +256,12 @@ export default function ToolsPage({ isDarkMode, toggleTheme }: PageProps) {
     });
   };
 
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      router.push(`/tools?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   return (
     <div
       className={`min-h-screen transition-colors duration-200 ${
@@ -265,6 +278,7 @@ export default function ToolsPage({ isDarkMode, toggleTheme }: PageProps) {
         onPageChange={(page) => void router.push(navPathMap[page])}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        onSearchSubmit={handleSearch}
         searchPlaceholder="Search in tools catalog..."
       />
 
@@ -315,7 +329,12 @@ export default function ToolsPage({ isDarkMode, toggleTheme }: PageProps) {
             <select
               value={departmentFilter}
               onChange={(event) => setDepartmentFilter(event.target.value)}
-              className={`rounded-xl border px-3 py-2 text-sm ${isDarkMode ? "border-white/10 bg-transparent text-zinc-300" : "border-zinc-200 bg-white text-zinc-700"}`}
+              className={`rounded-xl border pl-3 pr-8 py-2 text-sm appearance-none bg-no-repeat ${isDarkMode ? "border-white/10 bg-transparent text-zinc-300" : "border-zinc-200 bg-white text-zinc-700"}`}
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='${isDarkMode ? '%23a1a1aa' : '%2371717a'}'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5' /%3E%3C/svg%3E")`,
+                backgroundPosition: 'right 0.75rem center',
+                backgroundSize: '1rem 1rem'
+              }}
             >
               <option value="all" className={`font-bold ${isDarkMode ? "bg-[#0b0b0f] text-white" : ""}`}>All Departments</option>
               {departments.map((dep) => (
@@ -327,7 +346,12 @@ export default function ToolsPage({ isDarkMode, toggleTheme }: PageProps) {
             <select
               value={statusFilter}
               onChange={(event) => setStatusFilter(event.target.value as "all" | ToolApiStatus)}
-              className={`rounded-xl border px-3 py-2 text-sm ${isDarkMode ? "border-white/10 bg-transparent text-zinc-300" : "border-zinc-200 bg-white text-zinc-700"}`}
+              className={`rounded-xl border pl-3 pr-8 py-2 text-sm appearance-none bg-no-repeat ${isDarkMode ? "border-white/10 bg-transparent text-zinc-300" : "border-zinc-200 bg-white text-zinc-700"}`}
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='${isDarkMode ? '%23a1a1aa' : '%2371717a'}'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5' /%3E%3C/svg%3E")`,
+                backgroundPosition: 'right 0.75rem center',
+                backgroundSize: '1rem 1rem'
+              }}
             >
               <option value="all" className={`font-bold ${isDarkMode ? "bg-[#0b0b0f] text-white" : ""}`}>All Status</option>
               <option value="active" className={`font-normal ${isDarkMode ? "bg-[#0b0b0f] text-zinc-300" : ""}`}>Active</option>
@@ -337,7 +361,12 @@ export default function ToolsPage({ isDarkMode, toggleTheme }: PageProps) {
             <select
               value={categoryFilter}
               onChange={(event) => setCategoryFilter(event.target.value)}
-              className={`rounded-xl border px-3 py-2 text-sm ${isDarkMode ? "border-white/10 bg-transparent text-zinc-300" : "border-zinc-200 bg-white text-zinc-700"}`}
+              className={`rounded-xl border pl-3 pr-8 py-2 text-sm appearance-none bg-no-repeat ${isDarkMode ? "border-white/10 bg-transparent text-zinc-300" : "border-zinc-200 bg-white text-zinc-700"}`}
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='${isDarkMode ? '%23a1a1aa' : '%2371717a'}'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5' /%3E%3C/svg%3E")`,
+                backgroundPosition: 'right 0.75rem center',
+                backgroundSize: '1rem 1rem'
+              }}
             >
               <option value="all" className={`font-bold ${isDarkMode ? "bg-[#0b0b0f] text-white" : ""}`}>All categories</option>
               {categories.map((category) => (
@@ -484,6 +513,7 @@ export default function ToolsPage({ isDarkMode, toggleTheme }: PageProps) {
                     </div>
 
                     <div className={`flex items-center justify-end gap-1 border-t pt-3 ${isDarkMode ? "border-white/10" : "border-zinc-200"}`}>
+                      <button onClick={() => router.push('/analytics')} className={`rounded-lg p-1.5 ${isDarkMode ? "text-zinc-400 hover:bg-white/10" : "text-zinc-500 hover:bg-zinc-200"}`} title="View analytics"><BarChart2 className="size-4" /></button>
                       <button onClick={() => setDetailsTool(tool)} className={`rounded-lg p-1.5 ${isDarkMode ? "text-zinc-400 hover:bg-white/10" : "text-zinc-500 hover:bg-zinc-200"}`} title="View details"><Eye className="size-4" /></button>
                       <button onClick={() => setEditTool(tool)} className={`rounded-lg p-1.5 ${isDarkMode ? "text-zinc-400 hover:bg-white/10" : "text-zinc-500 hover:bg-zinc-200"}`} title="Edit tool"><Pencil className="size-4" /></button>
                       <button onClick={() => void toggleToolStatus(tool)} className={`rounded-lg p-1.5 ${isDarkMode ? "text-zinc-400 hover:bg-white/10" : "text-zinc-500 hover:bg-zinc-200"}`} title={tool.status === "active" ? "Disable tool" : "Enable tool"}><ToggleLeft className="size-4" /></button>
@@ -539,6 +569,13 @@ export default function ToolsPage({ isDarkMode, toggleTheme }: PageProps) {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => router.push('/analytics')}
+                            className={`rounded-lg p-1.5 ${isDarkMode ? "text-zinc-400 hover:bg-white/10" : "text-zinc-500 hover:bg-zinc-100"}`}
+                            title="View analytics"
+                          >
+                            <BarChart2 className="size-4" />
+                          </button>
                           <button
                             onClick={() => setDetailsTool(tool)}
                             className={`rounded-lg p-1.5 ${isDarkMode ? "text-zinc-400 hover:bg-white/10" : "text-zinc-500 hover:bg-zinc-100"}`}

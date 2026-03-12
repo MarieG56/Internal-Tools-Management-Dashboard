@@ -28,11 +28,17 @@ export default function HomePage({ isDarkMode, toggleTheme }: PageProps) {
     }
     const value = searchQuery.toLowerCase();
     return (
-      tool.name.toLowerCase().includes(value) ||
-      tool.department.toLowerCase().includes(value) ||
-      tool.status.toLowerCase().includes(value)
+      (tool.name?.toLowerCase() || "").includes(value) ||
+      (tool.department?.toLowerCase() || "").includes(value) ||
+      (tool.status?.toLowerCase() || "").includes(value)
     );
   });
+
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      router.push(`/tools?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   return (
     <div
@@ -53,6 +59,8 @@ export default function HomePage({ isDarkMode, toggleTheme }: PageProps) {
         }}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        onSearchSubmit={handleSearch}
+        searchPlaceholder="Search in tools catalog..."
       />
 
       <main className="mx-auto max-w-7xl px-4 py-8 md:px-6">
